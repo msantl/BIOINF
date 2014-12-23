@@ -25,7 +25,8 @@ void write(const char* graph) {
  *  Creates out.png with the visualization of tree as each char is read.
  */
 int main() {
-  Tree t;
+  const int NUM_ALPHABET = 30;
+  Tree t(NUM_ALPHABET);
   while (true) {
     string s;
     cin >> s;

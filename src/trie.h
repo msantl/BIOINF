@@ -1,3 +1,6 @@
+#ifndef TRIE_H
+#define TRIE_H
+
 #include <string>
 
 /**
@@ -34,3 +37,4 @@ class Trie {
     void dfs(const Node *x, int& curr_id, std::ostream& out);
 };
 
+#endif

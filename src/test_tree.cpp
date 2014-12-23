@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const int NUM_ALPHABET = 30;
+
 void find_all_subs(Tree *t, const string& x) {
   for (int l = 0; l < (int)x.size(); l++) {
     for (int r = l; r < (int)x.size(); r++) {
@@ -19,7 +21,7 @@ void testAllSubs() {
   string x;
   for (int i = 0; i < 300; i++)
     x += (rand() % 7 + 'a');
-  Tree t;
+  Tree t(NUM_ALPHABET);
   for (char c : x) {
     t.addTransition(c - 'a');
   }
@@ -31,7 +33,7 @@ void testRandom() {
   int n = 1000;
   const int MXA = 5;
   string s;
-  Tree t;
+  Tree t(NUM_ALPHABET);
   for (int i = 0; i < n; i++) {
     char c = 'a' + rand() % MXA;
     s += c;
@@ -54,7 +56,7 @@ void testRandomBig() {
   int n = 1000000;
   const int MXA = 5;
   string s;
-  Tree t;
+  Tree t(NUM_ALPHABET);
   for (int i = 0; i < n; i++) {
     char c = 'a' + rand() % MXA;
     s += c;

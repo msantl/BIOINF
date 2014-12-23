@@ -17,7 +17,7 @@ visualize_tree.o: visualize_tree.cpp tree.o
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 test_tree.o: test_tree.cpp tree.o
-	$(CC) $(CFLAGS) -c -o $@ $< 
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 tree.o: tree.cpp tree.h
 	$(CC) $(CFLAGS) -c -o $@ $< 
