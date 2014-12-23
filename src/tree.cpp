@@ -16,7 +16,6 @@ Tree::Tree(int alphabet_size) {
   root = new Node(this, -1, -1);
   for (int i = 0; i < alphabet_size; i++) {
     start->set(i, root);
-    // (*start)[i] = root;
     start->suffix_link = NULL;
   }
   root->suffix_link = start;
@@ -31,17 +30,7 @@ Tree::~Tree() {
   delete start;
 }
 
-/**
- * Makes state (x, (l, r)) explicit and return that state.
- * x - is an explicit state
- * l and r represent substring text[l..r]
- * t - next letter
- * This means, start from node x and spell out the given substring.
- *
- * If the state is already explicit then that state is returned (new state
- * isn't created).
- * If the state is end state, NULL is returned.
- */
+
 Tree::Node* Tree::split(Node *x, int l, int r, int t) {
   int len = r - l + 1;
   if (r == INF) len = text.size() - l;
@@ -68,10 +57,7 @@ Tree::Node* Tree::split(Node *x, int l, int r, int t) {
   return x;
 }
 
-/**
- * Returns canonized state which is corresponds to the one givven in params.
- * r is not returned because it never changes.
- */
+
 pair <Tree::Node*, int> Tree::canonize(Node *x, int l, int r) {
   while(true) {
     if (r < l) break;
@@ -83,7 +69,7 @@ pair <Tree::Node*, int> Tree::canonize(Node *x, int l, int r) {
   return make_pair(x, l);
 }
 
-void Tree::addTransition(int t) {
+void Tree::add_transition(int t) {
   assert(t >= 0 && t < alphabet_size);
   active_end++;
   text.push_back(t);
@@ -119,6 +105,19 @@ string Tree::toDot() {
   return graph.str();
 }
 
+void Tree::dfs(const Node *x, int& curr_id, ostream& out) {
+  int x_id = curr_id;
+  for (int i = 0; i < alphabet_size; i++) {
+    if ((*x)[i] != NULL) {
+      curr_id++;
+      out << x_id << " -> " << curr_id
+        << "[label=" << transition(x, i) << "]"
+        << endl;
+      dfs((*x)[i], curr_id, out);
+    }
+  }
+}
+
 string Tree::transition(const Node *x, int t) {
   const Node *next = (*x)[t];
   if (next == NULL) return "";
@@ -131,19 +130,6 @@ string Tree::transition(const Node *x, int t) {
     ret += text[l] + 'a';
   }
   return ret;
-}
-
-void Tree::dfs(const Node *x, int& curr_id, ostream& out) {
-  int x_id = curr_id;
-  for (int i = 0; i < alphabet_size; i++) {
-    if ((*x)[i] != NULL) {
-      curr_id++;
-      out << x_id << " -> " << curr_id
-        << "[label=" << transition(x, i) << "]"
-        << endl;
-      dfs((*x)[i], curr_id, out);
-    }
-  }
 }
 
 int Tree::match(const Node *node, const string& x, int x_start) {

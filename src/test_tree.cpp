@@ -23,7 +23,7 @@ void testAllSubs() {
     x += (rand() % 7 + 'a');
   Tree t(NUM_ALPHABET);
   for (char c : x) {
-    t.addTransition(c - 'a');
+    t.add_transition(c - 'a');
   }
   find_all_subs(&t, x);
   cout << "testAllSubs done." << endl;
@@ -37,7 +37,7 @@ void testRandom() {
   for (int i = 0; i < n; i++) {
     char c = 'a' + rand() % MXA;
     s += c;
-    t.addTransition(c - 'a');
+    t.add_transition(c - 'a');
   }
   find_all_subs(&t, s);
   for (int i = 0; i < 100; i++) {
@@ -60,7 +60,7 @@ void testRandomBig() {
   for (int i = 0; i < n; i++) {
     char c = 'a' + rand() % MXA;
     s += c;
-    t.addTransition(c - 'a');
+    t.add_transition(c - 'a');
   }
   cout << "Tree is created" << endl;
   for (int i = 0; i < 100; i++) {

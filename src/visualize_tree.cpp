@@ -31,7 +31,7 @@ int main() {
     string s;
     cin >> s;
     char c = s[0];
-    t.addTransition(c - 'a');
+    t.add_transition(c - 'a');
     write(t.toDot().c_str());
   }
   return 0;
