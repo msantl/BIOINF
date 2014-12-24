@@ -7,18 +7,20 @@
 #include <algorithm>
 
 #include "tree.h"
+#include "node.h"
+#include "array_node.h"
 
 using namespace std;
 
 Tree::Tree(int alphabet_size) {
   this->alphabet_size = alphabet_size;
-  start = new Node(this, -1, -1);
-  root = new Node(this, -1, -1);
+  start = new ArrayNode(this, -1, -1);
+  root = new ArrayNode(this, -1, -1);
   for (int i = 0; i < alphabet_size; i++) {
     start->set(i, root);
-    start->suffix_link = NULL;
+    start->suffix_link_ = NULL;
   }
-  root->suffix_link = start;
+  root->suffix_link_ = start;
   active_node = root;
   active_start = 0;
   active_end = -1;
@@ -26,12 +28,13 @@ Tree::Tree(int alphabet_size) {
 }
 
 Tree::~Tree() {
-  delete_all(root);
+  root->delete_subtree();
   delete start;
+  delete root;
 }
 
 
-Tree::Node* Tree::split(Node *x, int l, int r, int t) {
+Node* Tree::split(Node *x, int l, int r, int t) {
   int len = r - l + 1;
   if (r == INF) len = text.size() - l;
   if (l <= r || r == INF) {
@@ -39,13 +42,13 @@ Tree::Node* Tree::split(Node *x, int l, int r, int t) {
     int next_t = text[l];
     Node *next = (*x)[next_t];
     assert(next != NULL);
-    assert(next->edge_start + len < text.size());
-    if (t == text[next->edge_start + len]) {
+    assert(next->edge_start_ + len < text.size());
+    if (t == text[next->edge_start_ + len]) {
       return NULL; // end point
     } else {
-      Node *ret = new Node(this, next->edge_start, next->edge_start + len - 1);
-      ret->set(text[next->edge_start + len], next);
-      next->edge_start += len;
+      Node *ret = new ArrayNode(this, next->edge_start_, next->edge_start_ + len - 1);
+      ret->set(text[next->edge_start_ + len], next);
+      next->edge_start_ += len;
       x->set(next_t, ret);
       // (*x)[next_t] = ret;
       return ret;
@@ -58,7 +61,7 @@ Tree::Node* Tree::split(Node *x, int l, int r, int t) {
 }
 
 
-pair <Tree::Node*, int> Tree::canonize(Node *x, int l, int r) {
+pair <Node*, int> Tree::canonize(Node *x, int l, int r) {
   while(true) {
     if (r < l) break;
     Node *next = (*x)[text[l]];
@@ -77,20 +80,20 @@ void Tree::add_transition(int t) {
   while(true) {
     Node *split_node = split(active_node, active_start, active_end - 1, t);
     if (split_node == NULL) break;
-    split_node->set(t, new Node(this, active_end, INF));
+    split_node->set(t, new ArrayNode(this, active_end, INF));
     if (prev_node != root) { // if not first iteration
-      prev_node->suffix_link = split_node;
+      prev_node->suffix_link_ = split_node;
     }
     prev_node = split_node;
-    pair <Tree::Node*, int> canonized =
-      canonize(active_node->suffix_link, active_start, active_end - 1);
+    pair <Node*, int> canonized =
+      canonize(active_node->suffix_link_, active_start, active_end - 1);
     active_node = canonized.first;
     active_start = canonized.second;
   }
   if (prev_node != root) {
-    prev_node->suffix_link = active_node;
+    prev_node->suffix_link_ = active_node;
   }
-  pair <Tree::Node*, int> canonized =
+  pair <Node*, int> canonized =
       canonize(active_node, active_start, active_end); // Lemma 2
   active_node = canonized.first;
   active_start = canonized.second;
@@ -121,8 +124,8 @@ void Tree::dfs(const Node *x, int& curr_id, ostream& out) {
 string Tree::transition(const Node *x, int t) {
   const Node *next = (*x)[t];
   if (next == NULL) return "";
-  int l = next->edge_start;
-  int r = next->edge_end;
+  int l = next->edge_start_;
+  int r = next->edge_end_;
   if (r == INF) r = text.size() - 1;
   if (l < 0) l = 0;
   string ret = "";
@@ -135,7 +138,7 @@ string Tree::transition(const Node *x, int t) {
 int Tree::match(const Node *node, const string& x, int x_start) {
   int mn_len = min(node->edge_length(), (int)x.size() - x_start);
   for (int i = 0; i < mn_len; i++) {
-    if (text[node->edge_start + i] + 'a' != x[i + x_start]) return -1;
+    if (text[node->edge_start_ + i] + 'a' != x[i + x_start]) return -1;
   }
   return mn_len;
 }
@@ -153,10 +156,3 @@ bool Tree::find(const string& x) {
   return true;
 }
 
-void Tree::delete_all(Node *subtree) {
-  if (subtree == NULL) return;
-  for (Node::iterator it = subtree->begin(); it != subtree->end(); ++it) {
-    delete_all(*it);
-  }
-  delete subtree;
-}
