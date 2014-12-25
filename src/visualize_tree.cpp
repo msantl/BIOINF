@@ -2,6 +2,7 @@
 #include <gvc.h>
 
 #include "tree.h"
+#include "hashmap_node.h"
 
 using namespace std;
 
@@ -20,13 +21,17 @@ void write(const char* graph) {
   gvFreeContext(gvc);
 }
 
+Node* create_node(const Tree *tree, int edge_start, int edge_end) {
+  return new HashmapNode(tree, edge_start, edge_end);
+}
+
 /**
  *  Reads string, char by char.
  *  Creates out.png with the visualization of tree as each char is read.
  */
 int main() {
   const int NUM_ALPHABET = 30;
-  Tree t(NUM_ALPHABET);
+  Tree t(NUM_ALPHABET, create_node);
   while (true) {
     string s;
     cin >> s;

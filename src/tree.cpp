@@ -8,14 +8,18 @@
 
 #include "tree.h"
 #include "node.h"
-#include "array_node.h"
 
 using namespace std;
 
-Tree::Tree(int alphabet_size) {
+Node* Tree::create_node(const Tree *tree, int edge_start, int edge_end) {
+  return create_ptr_(tree, edge_start, edge_end);
+}
+
+Tree::Tree(int alphabet_size, Node* (*create_ptr)(const Tree*, int, int)) {
   this->alphabet_size = alphabet_size;
-  start = new ArrayNode(this, -1, -1);
-  root = new ArrayNode(this, -1, -1);
+  this->create_ptr_ = create_ptr;
+  start = create_node(this, -1, -1);
+  root = create_node(this, -1, -1);
   for (int i = 0; i < alphabet_size; i++) {
     start->set(i, root);
     start->suffix_link_ = NULL;
@@ -46,7 +50,7 @@ Node* Tree::split(Node *x, int l, int r, int t) {
     if (t == text[next->edge_start_ + len]) {
       return NULL; // end point
     } else {
-      Node *ret = new ArrayNode(this, next->edge_start_, next->edge_start_ + len - 1);
+      Node *ret = create_node(this, next->edge_start_, next->edge_start_ + len - 1);
       ret->set(text[next->edge_start_ + len], next);
       next->edge_start_ += len;
       x->set(next_t, ret);
@@ -80,7 +84,7 @@ void Tree::add_transition(int t) {
   while(true) {
     Node *split_node = split(active_node, active_start, active_end - 1, t);
     if (split_node == NULL) break;
-    split_node->set(t, new ArrayNode(this, active_end, INF));
+    split_node->set(t, create_node(this, active_end, INF));
     if (prev_node != root) { // if not first iteration
       prev_node->suffix_link_ = split_node;
     }

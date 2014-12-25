@@ -22,8 +22,9 @@ class Tree {
 
     /**
      * Creates an empty suffix tree with alphabet in range [0, alphabet_size>.
+     * create_node is a pointer to a function that creates nodes.
      */
-    Tree(int alphabet_size);
+    Tree(int alphabet_size, Node* (*create_node)(const Tree*, int, int));
 
     ~Tree();
 
@@ -46,7 +47,7 @@ class Tree {
     std::string toDot();
 
   private:
-
+    Node* (*create_ptr_)(const Tree*, int, int);
     Node *start; // all edges from starta go to root
     Node *root;
 
@@ -92,6 +93,8 @@ class Tree {
      * Invokes destructor for each node in a given subtree.
      */
     void delete_all(Node *subtree);
+
+    Node* create_node(const Tree *tree, int edge_start, int edge_end);
 };
 
 #endif
