@@ -1,2 +1,8 @@
 *.swp
 bin/*
+
+*.aux
+*.log
+*.pdf
+*.gz
+*.toc
