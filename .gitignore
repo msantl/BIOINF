@@ -6,3 +6,5 @@ bin/*
 *.pdf
 *.gz
 *.toc
+*.bbl
+*.blg
