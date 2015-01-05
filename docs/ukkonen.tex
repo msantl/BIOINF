@@ -15,10 +15,10 @@ backgroundcolor=\color{white},  % choose the background color. You must add \use
 showspaces=false,               % show spaces adding particular underscores
 showstringspaces=false,         % underline spaces within strings
 showtabs=false,                 % show tabs within strings adding particular underscores
-frame=single,           % adds a frame around the code
+frame=tb,           % adds a frame around the code
 tabsize=2,          % sets default tabsize to 2 spaces
 captionpos=b,           % sets the caption-position to bottom
-breaklines=true,        % sets automatic line breaking
+breaklines=false,        % sets automatic line breaking
 breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
 escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
@@ -28,10 +28,10 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \renewcommand{\figurename}{Slika}
 \renewcommand{\tablename}{Tablica}
-\nocite{*}
+\renewcommand{\lstlistingname}{Programski odsječak}
 
 % TODO: Navedite naslov rada.
-\title{Naslov}
+\title{Izgradnja sufiksnog stabla - Ukkonenov algoritam}
 
 % TODO: Navedite vaše ime i prezime.
 \author{Frane Kurtović i Matija Šantl}
@@ -44,14 +44,76 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \tableofcontents
 
 \chapter{Uvod}
-Uvod rada. Nakon uvoda dolaze poglavlja u kojima se obrađuje tema.
+Sufiksno stablo \engl{suffix tree} je stablasta struktura podataka koja sadrži sve sufikse nekog niza znakova \cite{ukkonen}. Sufiksno stablo na elegantan način rješava problem pretraživanja podniza u nizu, precizinije, podniz je moguće pronaći u vremenu proporcionalnom duljini podniza \cite{mile}. Jedna takva primjena je pronalazak najduljeg zajedničkog podniza dvaju nizova u vremenu porporcionalnom zbroju njihovih duljina \cite{gusfield}.
+	
+	Sufiksno stablo može biti izgrađeno u vremenu linearno ovisnom o duljini ulaznog niza. Današnji standard je \textit{Ukkonenov} algoritam iz 1995. godine. To je prvi \textit{on-line} algoritam za izgradnju sufiksnog stabla \cite{mile}.
+		
+\section{Osnovni pojmovi}
+	Neka je $T = t_1 t_2 ... t_n$ niz znakova nad abecedom $\Sigma$. Svaki niz znakova $x$ takav da je $T=u x v$ za neke (moguće i prazne) nizove $u$ i $v$ nazivamo podnizom od $T$.
+
+U ovom tekstu korištene su sljedeće oznake:
+\begin{itemize}
+	\item ulazni niz znakova je označen s $T$,
+	\item duljina ulaznog niza znakova $T$ je označena s $n$
+	\item \textit{prefiks} niza $T$ je podniz $T[1, i]$ te je označen s $T^i$, $1 \le i \le n$
+	\item \textit{sufiks} niza $T$ je podniz $T[i, n]$ te je označen s $T_i$, $1 \le i \le n + 1$
+	\item posebno, $T_{n+1}$ je prazan sufiks, $T_{n+1} = \epsilon$
+	\item skup svih sufiksa niza znakova $T$ je označen s $\sigma(T)$
+	\item stoblo sufiksa \engl{suffix trie} je stoblo koje predstavlja $\sigma(T)$
+\end{itemize}
 
 \chapter{Opis algoritma}
+	\textit{Ukkonenov} algoritam se može predstaviti kao linearna verzija algoritma za sufiksna stobla koji je kvadratne složenosti. Taj je algoritam opisan u poglavlju 2.1. Jednom transparentnom promjenom, koja je opisana u poglavlju 2.3, dolazimo do algoritma linearne složenosti, poznatijeg pod nazivom \textit{Ukkonenov} algoritam za izgradju sufiksnog stabla u linearnom vremenu.
 
+\section{Izgradnja sufiksnog stobla}
+	Formalno, sufiksno se stoblo može definirati kao petorka $STrie(T) = (Q \cup {\perp}, root, F, g, f)$, i možemo reći da je takvo stoblo prošireni deterministički konačni automat koji ima stablolik graf prijelaza koji predstavljaju stoblo $\sigma(T)$ koje je prošireno sa tzv. funkcijom sufiksa \engl{suffix function} $f$ i pomoćnim stanjem $\perp$. Skup $Q$ od stanja $STrie(T)$ se može staviti u jedan-naprema-jedan vezu s podnizovima niza $T$. Stanje koje odgovara podnizu $x$ oznacavamo s $\overline{x}$.
+	
+	Početno stanje $root$ odgovara praznom nizu $\epsilon$, a skup F završnom skupu stanja  $\sigma(T)$. Funkcija prijelaza $g$ je definirana kao $g(\overline{x}, a) = \overline{y}$ za sve $\overline{x}$, $\overline{y}$ u $Q$ tako da $y = x a$ pri čemu je $a \in \Sigma$.
+	
+	Funkcija sufiksa $f$ je definirana za svako stanje $\overline{x} \in Q$ na sljedeći način. Neka je $\overline{x} \ne root$. Onda $x = ay$ za neki $a \in \Sigma$, i $f(\overline{x}) = \overline{y}$. Dodatno, $f(root) = \perp$.
+	
+	Pomoćno stanje $\perp$ nam omogućava pisanje algoritama u nastavcima tako da se izbjegne eksplicitna razlika između praznih i ne-praznim sufiksa. Stanje $\perp$ je spojeno na stoblo s $g(\perp, a) = root$ za svaki $a \in \Sigma$. 
+	
+	U skladu s \cite{ukkonen}, funkciju sufiksa $f(r)$ nazivamo sufiksnom vezom \engl{suffix link} stanja $r$. 
+	
+	On-line izgradnja sufiksnog stobla $STrie(T)$ radi se prolaskom niz $T$ s lijeva na desno. Kao međurezultat izgradnje dobijamo $STrie(T^i)$ za $i=0, 1, ..., n$. 
+	Ključna primjedba koja opisuje kako se $STrie(T^i)$ dobija iz $STrie(T^{i-1})$ je da se sufiksi od $T^i$ mogu dobiti dodavanjem $t_i$ na kraj svakog sufiksa od $T^{i-1}$ i dodavanjam praznog sufiksa, tj. $$ \sigma(T^i) = \sigma(T^{i-1}) \cup {\epsilon}$$
+	
+	Prema definiciji, $STrie(T^{i-1})$ prihvaća $\sigma{T^{i-1}}$. Kako bismo dobili da prihvaća i $\sigma{T^{i}}$, moramo proučiti skup završnih stanja $F_{i-1}$ od $STrie(T^{i-1})$. Ako $r \in F_{i-1}$ još nije $t_{i}$-prijelaz , prijelaz od $r$ prema novom stanju se dodaje. Stanja u koja vode neki stari ili novi $t_{i}$-prijelazi iz nekog stanja $F_{i-1}$ zajedno sa stanjem $root$ čine završna stanja $F_i$ od $STrie{T^{i}}$.
+	
+	Stanja $r \in F_{i-1}$ koja dobe nove prijelaze mogu se pronaći koristeći sufiksne veze na sljedeći način. Definicija sufiksne funkcije implicira da je $r \in F_{i-1}$ ako i samo ako $r = f^{j} (\overline{t_1 ... t_{i-1}}) $ za neki $0 \le j \le i-1$. Zbog toga su sva stanja u $F_{i-1}$ na putu sufiksne veze koja počinje na najdubljem stanju $\overline{t_1 .. t_{i-1}}$ od $STrie(T^{i-1})$ i završava na $\perp$. Taj se put zove granični put \engl{boundary path} od $STrie(T^{i-1})$.
+	
+	Ako stanje $\overline{z}$ na graničnom putu još nema prijelaz na $t_i$, novo stanje $\overline{z t_i}$ i novi prijelaz $g(\overline{z}, t_i) = \overline{z t_i}$ se dodaje. Time osvježavamo funkciju prijelaza, $g$. Funkciju sufiksa, $f$, osvježavamo tako da nova stanja $\overline{z t_i}$ povezujemo s novim sufiksnim vezama koje čine put koji počinje u stanju $\overline{t_1 t_2 .. t_i}$, tj. granični put od $STrie(T^i)$. 
+	
+	Prolazak preko $F_{i-1}$ na graničnom putu se može odmah zaustaviti kada je pronađeno prvo stanje $\overline{z}$ takvo da stanje $\overline{z t_i}$ (a time i prijelaz $g(\overline{z}, t_i) = \overline{z t_i}$) već postoji. Neka je $\overline{z t_i}$ stanje. Onda $STrie(T^{i-1})$ mora sadržavati stanje $\overline{z\rq{} t_i}$ i prijelaz $g(\overline{z\rq{}}, t_i) = \overline{z\rq{} t_i}$ za svaki $\overline{z\rq{}} = f^j(\overline{z})$, $j \ge 1$. Drugim riječima, ako je $z t_i$ podniz od $T^{i-1}$ onda je svaki sufiks od $z t_i$ podniz od $T^{i-1}$. Stanje $\overline{z}$ će uvijek postojati jer je stanje $\perp$ zadnje stanje na graničnom putu i stanje $\perp$ ima definiran prijelaz za svaki mogući $t_i$.
+	
+	Kada je takav obilazak završio, stvorit ćemo novo stanje za svaku sufiks vezu koju smo pregledali tijekom obilaska. To implicira da će cijeli postupak trajati ovisno o veličini dobivenog automata.
+	
+	U nastavku je prikazan algoritam za izgradnju stobla $STrie{T^i}$ iz $STrie(T^{i-1})$, pri čemu je \textit{top} zapravo stanje $\overline{t_1 ... t_{i-1}}$;
+	
+\begin{lstlisting}[caption=Izgradnja $STrie(T^i)$ iz $STrie(T^{i-1})$, label=algo1]
+r = top;
+dok je g(r, t[i]) nedefinirano
+	stvori novo stanje r` i novi prijelaz g(r, t[i]) = r`;
+	ako je r != top onda: stvori novu sufiksnu vezu f(oldr`) = r`;
+	oldr` = r`;
+	r = f(r);
+stvori novu sufiksnu vezu f(oldr`) = g(r, t`);
+top = g(top, t[i])
+\end{lstlisting}
+	
+	Počevši od $STrie(\epsilon)$, koje se sastoji samo od $root$ i $\perp$ i veza između njih, ponavljanjem procedure \ref{algo1} za $t_i = t_1,t_2,...t_n$ dobijamo $STrie(T)$. Algoritam je optimalan u smislu da je vremenska složenost proporcionalna rezultatu $STrie(T)$, a to je proporcionalno s $|Q|$, tj. brojem različitih podnizova od $T$. Međutim, to može dovesti do kvadratne složenosti u $|T|$, ako je npr. $T=a^n b^n$.
+
+\section{Sufiksno stablo}
+
+
+\section{On-line izgradnja sufiksnog stabla}
 
 \chapter{Prikaz rada algoritma}
 
+
 \chapter{Rezultati testiranja}
+Rezultati.
 
 \chapter{Zaključak}
 Zaključak.
