@@ -29,6 +29,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \renewcommand{\figurename}{Slika}
 \renewcommand{\tablename}{Tablica}
 \renewcommand{\lstlistingname}{Programski odsječak}
+\newtheorem{lema}{Lema}
 
 % TODO: Navedite naslov rada.
 \title{Izgradnja sufiksnog stabla - Ukkonenov algoritam}
@@ -119,17 +120,127 @@ top = g(top, t[i])
 	
 	Formalno, sufiksno stablo možemo predstaviti uređenom četvorkom kao $STree(T) = (Q\rq{} \cup {\perp}, root, g\rq{}, f\rq{})$.
 	
-	Na neko implicitno ili eksplicitno stanje sufiksnog stabla $r$ se referenicramo pomoću uređenog para $s, w$ gdje je $s$ neko eksplicitno stanje koje prethodi stanju $r$ a $w$ je niz znakova koje posjećujemo na putu od $s$ prema $r$ u odgovarajućem sufiksnom stoblu. Referencijski par \engl{reference pair} se naziva kanonskim \engl{canonical} ako je stanje $s$ najbliži predak stanja $r$ (i prema toma niz $w$ je najkraći mogući). Za nako eksplicitno stanje $r$, kanonski referencijski par je $(r, \epsilon)$, tj. budući da koristimo pokazivače, taj par poprima oblik $(r, (p+1, p))$ pri čemu je $w = t_k ... t_p$.
+	Na neko implicitno ili eksplicitno stanje sufiksnog stabla $r$ se referenicramo pomoću uređenog para $s, w$ gdje je $s$ neko eksplicitno stanje koje prethodi stanju $r$ a $w$ je niz znakova koje posjećujemo na putu od $s$ prema $r$ u odgovarajućem sufiksnom stoblu. Referentni par \engl{reference pair} se naziva kanonskim \engl{canonical} ako je stanje $s$ najbliži predak stanja $r$ (i prema toma niz $w$ je najkraći mogući). Za takvo eksplicitno stanje $r$, kanonski referentni par je $(r, \epsilon)$, tj. budući da koristimo pokazivače, taj par poprima oblik $(r, (p+1, p))$ pri čemu je $w = t_k ... t_p$.
 	
 	Eksplicitna završrna stanja dobivamo dodavanjem oznake kraja na $T$ koja se ne pojavljuje nigdje u $T$.
 
 \section{On-line izgradnja sufiksnog stabla}
 
-\chapter{Prikaz rada algoritma}
+	Neka su $s_1 = \overline{t_1 ... t_{i-1}}$, $s_2, s_3, ..., s_i = root$, $s_{i+1} = \perp$ stanja sufiksnog stobla $STrie(T^{i-1})$ koja se nalaze na graničnom putu. Neka je $j$ najmanji indeks takav da $s_j$ nije list, i neka je $j\rq{}$ najmanji indeks takav da $s_{j\rq{}}$ ima $t_i$-prijelaz.
+	
+\begin{lema}
+Algoritam \ref{algo1} dodaje u $STrie(T^{i-1})$ jedan $t_i$-prijelaz za svako stanje $s_h$, $1 \le h \le j\rq{}$ takvo da je $1 \le h \le j$, novi prijelaz proširuje postojeće grane stobla koje završavaju na listu $s_h$, a za $j \le h \le j\rq{}$, stvara nove prijelaze koji se granaju iz $s_h$.
+\end{lema}
 
+	Stanje $s_j$ zovemo aktivnom točkom \engl{active point} a stanje $s_{j\rq{}}$ završnom točkom \engl{end point} sufiksnog stobla $STrie(T^{i-1})$. Ta stanja postoje kao eksplicitna ili implicitna i u sufiksnom stablu $STree(T^{i-1})$. 
+	
+	Prema \textit{Lema 1}, algoritam \ref{algo1} dodaje dvije skupine $t_i$-prijelaza u $STrie(T^{i-1})$.
+
+\begin{enumerate}
+	\item Stanja na graničnom putu prije aktivne točke $s_j$ dobijaju prijelaz. Ta stanja su listovi pa zbog toga svaki prijelaz mora proširiti postojeće grane sufiksnog stobla.
+	\item Stanja nakon aktivne točke $s_j$ pa sve do završne točke $s_{j\rq{}}$ (ne uključujući) dobijaju novi prijelaz, a budući da ta stanja nisu listovi, ti prijelazi moraju započeti novu granu.
+\end{enumerate}
+
+	Prva skupina prijelaza se može implementirati kao osvježavanje desnog pokazivača od svakog prijelaza koji predstavlja granu. Neka je $g\rq{}(s, (k, i-1)) = r$ jedan takav prijelaz. Desni pokazivač mora pokazivati na zadnju poziciju, i-1, od $T^{i-1}$. Zbog toga što je stanje $r$ list, svaki put koji vodi do $r$ mora biti jedan sufiks od $T^{i-1}$ koji se ne pojavljuje nigdje drugdje unutar $T^{i-1}$. Tada osvježeni prijelaz mora biti $g\rq{}(s, (k, i)) = r$. Time se uopće ne mijenjaju stanje $r$ i $s$ već samo niz znakova koji nastaje obilaskom puta. Kako bi osvježavanje svakog takvog stanja zasebno bilo vremenski preskupo, koristi se sljedeći trik.
+
+	Svaki prijelaz stable $STrer(T^{i-1})$ koji vodi ka listu se zove otvoreni prijelaz \engl{opem transition}. Takav je prijelaz oblika $g\rq{}(s, (k, i-1)) = r$. Budući da desni pokazivač mora pokazivati na zadnju poziciju $i-1$ od $T^{i-1}$, nije nužno da desni pokazivač ima ispravnu vrijednost, već se umjesto toga otvoreni prijelazi mogu predstaviti kao $g\rq{}(s, (k, \infty)) = r$ gdje $\infty$ označava da otvoreni prijelaz može \lq\lq{}rasti\rq\rq{}. $g\rq{}(s, (k, \infty)) = r$ zapravo predstavlja granu bilo koje duljine između stanja $s$ i imaginarnog stanja $r$ koje je u \lq\lq{}beskonačnosti\rq\rq{}. Zbog toga nije potrebno eksplicitno osvježavanje desnog pokazivača kada se umeće $t_i$ u granu. Oznake $\infty$ se mogu zamijeniti s $n = |T|$ nakon što smo završili izgradnju stabla $STree(T)$.
+	
+	Druga skupina prijelaza stvara sasvim nove grane koje počinju u stanjima $s_h$, $j \le h \le h\rq{}$. Traženje takvih stanja $s_h$ zahtjeva malo pažnje budući da ne moraju nužno biti eksplicitna u tom trenutku. Takva ćemo stanja nalaziti na graničnom putu stabla $STree(T^{i-1})$ koristeći referentne parove i sufiksne veze.
+	
+	Neka je $h = j$ i neka je $(s, w)$ kanonski referentni par za $s_h$ za recimo aktivnu točku. Kako je $s_h$ na graničnom putu stobla $STrie(T^{i-1})$, $w$ mora biti sufiks od $T^{i-1}$. Zbog toga je $(s, w) = (s, (k, i - 1))$ za neki $k \le i$.
+	
+	Želimo li kreirati novu granu koja počinje u stanju na koje se referenciramo s $(s, (k, i-1))$, moramo najprije provjeriti da li se možda $(s, (k, i- 1))$ već referencira na stanje $s_{j\rq{}}$. Ako se referencira onda smo gotovi. Inače moramo stvoriti novu granu. Stanje na koje se referenciramo s $(s, (k, i-1))$, $s_h$ mora biti eksplicitno do sad. Ako stanje $s_h$ nije eksplicitno, ono se stvara dijeljenjem prijelaza koje sadrži odgovarajuće implicitno stanje. Tek onda se stvara $t_i$-prijelaz iz stanja $s_h$. Taj prijelaz mora biti otvoreni prijelaz, tj. $g\rq{}(s_h, (i, \infty)) = s_{h\rq{}}$ pri čemu je $s_{h\rq{}}$ novi list. K tome, dodaje sufiksna veza $f\rq{}(s_h)$ ako je stanje $s_h$ nastalo dijeljenjem prijelaza.
+	
+	Nako toga se izgradnja pomiče na $s_{h+1}$. Budući  da je referentni par za $s_h$ bio $(s, (k, i-1))$, kanonski referentni par za $s_{h+1}$ će biti $canonize(f\rq{}(s), (k, i-1))$ pri čemu $canonize$ stvara referentni par kanonskim tako da osvježi stanje i lijevi pokazivač. Gornje navedene operacije se tada ponavljaju za $s_{h+1}$ pa sve dok se pronađe završna točka $s_{j\rq{}}$.
+	
+	Na taj način radi funkcija $update$ koja je prikazana u programskom odsječku \ref{update}. Ta funkcija pretvara stablo $STree(T^{i-1})$ u $STree(T^i)$ umetanjem $t_i$-prijelaza iz druge skupine. Funkcija koristi pomoćne funkcije $canonize$ koje je spomenuta gore, te $test-and-split$ koja provjerava da li se dani referentni par referencira na završnu točku. Ako se ne referencira na završnu točku tada funkcija $test-and-split$ stvara i vraća novo eksplicitno stanje za dani referentni par ako se taj referentni par već ne referancira na eksplicitno stanje. Funkcija $update$ vraća referentni par za završnu točku $s_{j\rq{}}$.
+	
+	
+\begin{lstlisting}[caption=Funkcija $update$, label=update]
+funkcija update(s, (k, i)):
+	// (s, (k, i - 1)) je kanonski referentni par za aktivnu tocku
+	stari_root = root
+	(zavrsna_tocka, r) = test_and_split(s, (k, i-1), t[i])
+	
+	dok je zavrsna_tocka = False
+		stvori novi prijelaz g`(r, (i, INF)) = r` 
+		ako je stari_root != root onda
+			stvori novu sufiksnu vezu f`(stari_root) = r
+		stari_root  = r
+		(s, k) = canonize(f`(s), (k, i-1))
+		(zavrsna_tocka, r) = test_and_split(s, (k, i- 1), t[i])
+		
+	ako je stari_root != root onda
+		stvori novu sufiksnu vezu f`(stari_root) = s
+
+	vrati (s, k)
+\end{lstlisting}
+
+	Funkcija $test-and-split$ provjerava da li je stanje s kanonskim referentnim parom $(s, (k, p))$ završna točka, tj. da li bi to stanje u stoblu $STrie(T^{i-1})$ imalo $t_i$-prijelaz. Simbol $t_i$ je dan kao ulazni parametar $t$. Ako $(s, (k, p))$ nije završna točka, stanje (s, (k, p)) se napravi eksplicitnim ako još nije tako da se podijeli prijelaz. 
+
+\begin{lstlisting}[caption=Funkcija $test-and-split$, label=testandsplit]
+funkcija test-and-split(s, (k, p), t):
+	ako je k <= p onda
+		neka je g`(s, (k`, p`)) = s` t[k]-prijelaz iz s;
+		ako je t = t[k` + p - k _ 1] onda
+			vrati (True, s)
+		inace
+			zamijeni gornji t[k]-prijelaz s prijelazima
+				g`(s, (k`, k` + p - k)) = r
+				g`(r, (k` + p - k + 1, p`)) = s`
+				pri cemu je r novo stanje
+				vrati (False, r)
+	inace
+		ako ne postoji t-prijelaz iz s
+			vrati (False, s)
+		inace
+			vrati (True, s)
+\end{lstlisting}
+
+	Odgovor na pitanje da li je neko stanje završna točka može se naći u konstantnom vremenu promatrajući pritom samo jedan prijelaz is $s$.
+	
+	Funkcija $canonize$ za dani referentni par $(s, (k, p))$ za neko stanje $r$, nalazi i vraća stanje $s\rq{}$ i lijevi pokazivač $k\rq{}$ takvi da $(s\rq{}, (k\rq{}, p))$ bude referentni par za stanje $r$. Stanje $s\rq{}$ je najbliži eksplicitni predak stanja $r$ (ili stanje $r$ ako je ono eksplicitno). Zbog toga niz znakova koji vode iz $s\rq{}$ u $r$ mora biti sufiks niza $t_k ... t_p$ koj vodi iz $s$ u $r$. Iz tog se razloga desni pokazivač ne mijenja, dok lijevi može postati $k\rq{}$, $k\rq{} \ge k$.
+	
+\begin{lstlisting}[caption=Funkcija $canonize$, label=canonize]
+funkcija canonize(s, (k, p)):
+	ako je p < k onda
+		vrati (s, k)
+	inace
+		pronadi t[k]-prijelaz g`(s, (k`, p`)) = s` iz s
+		dok je p` - k` <= p - k
+			k = k + p` - k` + 1
+			s = s`
+			ako je k <= p onda
+				nadi t[k]-prijelaz g`(s, (k`, p`)) = s` iz s
+				
+		vrati (s, k)
+\end{lstlisting}
+
+	Kako bi se omogućila daljnja konstrukcija stabla za simbol $t_{i+1}$, mora se pronaći aktivna točka stabla $STree(T^i)$. Stanje $s_j$ je aktivna točka stabla $STree(T^{i-1})$ ako i samo ako je $s_j = \overline{t_j ... t_{i-1}}$ pri čemu je $t_j ... t_{i-1}$ najdulji sufiks od $T^{i-1}$ koji se pojavljuje barem dva puta u $T^{i-1}$. Stanje $s_{j\rq{}}$ je završna točka stabla $STree(T^{i-1})$ ako i samo ako je $s_{j\rq{}} = \overline{t_{j\rq{} ... t_{i-1}}}$ gdje je $t_{j\rq{} ... t_{i-1}}$ najdulji sufiks od $T^{i-1}$ takav da je $t_{j\rq{} ... t_{i-1}} t_i$ podniz od $T^{i-1}$. To znači da ako je $s_{j\rq{}}$ završna točka stabla $STree(T^{i-1})$ onda je $t_{j\rq{} ... t_{i-1}} t_i$ najdulji sufiks od $T^i$ koji se pojavljuje barem dvaput u $T^i$, tj., stanje $g(s_{j\rq{}}, t_i)$ je aktivna točka stabla $STree(T^i)$.
+			
+\begin{lema}
+Neka je $(s, (k, i-1))$ referentni par završne točke $s_j\rq{}$ stabla $STree(T^{i-1})$. Onda je (s, (k, i)) referentni par aktivne točke stabla $STree(T^i)$.
+\end{lema}
+			
+\begin{lstlisting}[caption=Konstrukcija sufiksnog stabla, label=construct]
+stvori stanja root i start
+za j = 1 do m
+	stvori prijelaz g`(, (-j, -j)) = root
+stvori sufiksnu vezu f`(root) = start
+
+s = root, k = 1, i = 0
+dok t[i+1] nije zavrsni znak
+	i = i + 1
+	(s, k) = update(s, (k, i))
+	(s, k) = canonize(s, (k, i))
+\end{lstlisting}
+
+Programski odsječak \ref{construct} konstruira sufiksno stablo $STree(T)$ za ulazni niz znakova $T = t_1 .. t_n$ on-line u vremenskoj složenosti $O(n)$.
+						
+\chapter{Prikaz rada algoritma}
+Tu ubacujemo slike za svaki korak s opisom za neki primjer.
 
 \chapter{Rezultati testiranja}
-Rezultati.
 
 \chapter{Zaključak}
 Zaključak.
