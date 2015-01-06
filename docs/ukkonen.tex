@@ -102,10 +102,12 @@ stvori novu sufiksnu vezu f(oldr`) = g(r, t`);
 top = g(top, t[i])
 \end{lstlisting}
 	
-	Počevši od $STrie(\epsilon)$, koje se sastoji samo od $root$ i $\perp$ i veza između njih, ponavljanjem procedure \ref{algo1} za $t_i = t_1,t_2,...t_n$ dobijamo $STrie(T)$. Algoritam je optimalan u smislu da je vremenska složenost proporcionalna rezultatu $STrie(T)$, a to je proporcionalno s $|Q|$, tj. brojem različitih podnizova od $T$. Međutim, to može dovesti do kvadratne složenosti u $|T|$, ako je npr. $T=a^n b^n$.
+	Počevši od $STrie(\epsilon)$, koje se sastoji samo od stanja $root$, $\perp$ i veza između njih, ponavljanjem procedure \ref{algo1} za $t_i = t_1,t_2,...t_n$ dobijamo $STrie(T)$. Algoritam je optimalan u smislu da je vremenska složenost proporcionalna konačnom rezultatu, $STrie(T)$, a to je proporcionalno s $|Q|$, tj. brojem različitih podnizova od $T$. Međutim, to može dovesti do kvadratne složenosti u $|T|$, ako je npr. $T=a^n b^n$.
 
 \section{Sufiksno stablo}
-
+	Sufiksno stablo $STree(T)$ nad nizom $T$ je struktura podataka koja predstavlja $STrie(T)$ u prostoru koji je linearan s duljinom $|T|$ niza $T$ \cite{ukkonen}. To se postiže tako da ne koristimo sva, već samo podskup stanja $Q\rq{} \cup {\perp}$ svih stanja od $STrie(T)$. Ta stanaj nazivamo eksplictna stanja \engl{explicit states}. Skup $Q\rq{}$ se sastoji od granajućih stanja \engl{branching state}, stanja koja imaju barem dva prijelaza, i listova \engl{leaves}, stanja koja nemaju prijelaza. Po definiciji, stanje $root$ je uključeno u granajuća stanja. Sva preostala stanja $STrie(T)$ zovemo implicitna stanja \engl{implicit states} sufiksnog stabla $STree(T)$.
+	
+	
 
 \section{On-line izgradnja sufiksnog stabla}
 
