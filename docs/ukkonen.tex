@@ -105,9 +105,23 @@ top = g(top, t[i])
 	Počevši od $STrie(\epsilon)$, koje se sastoji samo od stanja $root$, $\perp$ i veza između njih, ponavljanjem procedure \ref{algo1} za $t_i = t_1,t_2,...t_n$ dobijamo $STrie(T)$. Algoritam je optimalan u smislu da je vremenska složenost proporcionalna konačnom rezultatu, $STrie(T)$, a to je proporcionalno s $|Q|$, tj. brojem različitih podnizova od $T$. Međutim, to može dovesti do kvadratne složenosti u $|T|$, ako je npr. $T=a^n b^n$.
 
 \section{Sufiksno stablo}
-	Sufiksno stablo $STree(T)$ nad nizom $T$ je struktura podataka koja predstavlja $STrie(T)$ u prostoru koji je linearan s duljinom $|T|$ niza $T$ \cite{ukkonen}. To se postiže tako da ne koristimo sva, već samo podskup stanja $Q\rq{} \cup {\perp}$ svih stanja od $STrie(T)$. Ta stanaj nazivamo eksplictna stanja \engl{explicit states}. Skup $Q\rq{}$ se sastoji od granajućih stanja \engl{branching state}, stanja koja imaju barem dva prijelaza, i listova \engl{leaves}, stanja koja nemaju prijelaza. Po definiciji, stanje $root$ je uključeno u granajuća stanja. Sva preostala stanja $STrie(T)$ zovemo implicitna stanja \engl{implicit states} sufiksnog stabla $STree(T)$.
+	Sufiksno stablo $STree(T)$ nad nizom $T$ je struktura podataka koja predstavlja $STrie(T)$ u prostoru koji je linearan s duljinom $|T|$ niza $T$ \cite{ukkonen}. To se postiže tako da ne koristimo sva, već samo podskup stanja $Q\rq{} \cup {\perp}$ svih stanja od $STrie(T)$. Ta stanja nazivamo eksplictna stanja \engl{explicit states}. Skup $Q\rq{}$ se sastoji od granajućih stanja \engl{branching state}, stanja koja imaju barem dva prijelaza, i listova \engl{leaves}, stanja koja nemaju prijelaza. Po definiciji, stanje $root$ je uključeno u granajuća stanja. Sva preostala stanja $STrie(T)$ zovemo implicitna stanja \engl{implicit states} sufiksnog stabla $STree(T)$.
 	
+	Niz znakova $w$ koji se nalazi na putu u stoblu $STrie(T)$ između dva eksplicitna stanja $s$ i $r$ je u stablu $STree(T)$ predstavljen kao generalizirani prijelaz $g\rq{}(s, w) = r$. Kako bi uštedjeli na prostoru, niz znakova $w$ je zapravo prikazan uređenim parom pokazivača $(k, p)$ na $T$ takvih da je $w = t_k ... t_p$. Zbog toga, generalizirani prijelaz ima oblik $g\rq{}(s,(k, p)) = r$.
 	
+	Prijelaz $g\rq{}(s, (k, p)) = r$ nazivamo \textit{a-prijelaz} ako je $t_k = a$. Svako stanje $s$ može imati najviše jedan \textit{a-prijelaz} za svaki $a \in \Sigma$.
+	
+	Prijelazi $g(\perp, a) = root$ su prikazani na sličan način. Neka je $\Sigma = {a_1, a_2, ..., a_m}$. Onda je prijelaz $g(\perp, a_j) = root$ prikazan kao $g(\perp, (-j, -j)) = root$ za $j = 1, ... , m$.
+	
+	Zbog toga, sufiksno stablo $STree(T)$ ima dvije komponente: niz znakova $T$ i samo stablo. Ono je linearne veličine u $|T|$ jer skup $Q\rq{}$ ima najviše $|T|$ listova (postoji najviše jedan list za svaki ne-prazni sufiks) i zbog toga skup $Q\rq{}$ mora sadržavati najviše $|T| - 1$ granajućih stanja. Može postojati najviše $2|T| - 2$ prijelaza između stanja u skupu $Q\rq{}$, gdje svaki prijelaz zauzima konstatan prostor zbog korištenja pokazivača.
+	
+	Stablo se dodatno proširuje sa sufiksnom funkcijom $f\rq{}$, koja je sada definirana za sva granajuća stanja $\overline{x} \ne root$ kao $f\rq{}(\overline{x}) = \overline{y}$ gdje je $y$ takvo granajuće stanje da je $x = ay$ za neki $a \in \Sigma$, i $f\rq{}(root) = \perp$. 
+	
+	Formalno, sufiksno stablo možemo predstaviti uređenom četvorkom kao $STree(T) = (Q\rq{} \cup {\perp}, root, g\rq{}, f\rq{})$.
+	
+	Na neko implicitno ili eksplicitno stanje sufiksnog stabla $r$ se referenicramo pomoću uređenog para $s, w$ gdje je $s$ neko eksplicitno stanje koje prethodi stanju $r$ a $w$ je niz znakova koje posjećujemo na putu od $s$ prema $r$ u odgovarajućem sufiksnom stoblu. Referencijski par \engl{reference pair} se naziva kanonskim \engl{canonical} ako je stanje $s$ najbliži predak stanja $r$ (i prema toma niz $w$ je najkraći mogući). Za nako eksplicitno stanje $r$, kanonski referencijski par je $(r, \epsilon)$, tj. budući da koristimo pokazivače, taj par poprima oblik $(r, (p+1, p))$ pri čemu je $w = t_k ... t_p$.
+	
+	Eksplicitna završrna stanja dobivamo dodavanjem oznake kraja na $T$ koja se ne pojavljuje nigdje u $T$.
 
 \section{On-line izgradnja sufiksnog stabla}
 
