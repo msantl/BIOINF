@@ -241,14 +241,19 @@ Programski odsječak \ref{construct} konstruira sufiksno stablo $STree(T)$ za ul
 Tu ubacujemo slike za svaki korak s opisom za neki primjer.
 
 \chapter{Rezultati testiranja}
+Testiranje
 
 \chapter{Zaključak}
-Zaključak.
+	\textit{Ukkonenov} algoritam za izgradnju sufiksnog stabla ima dvije prednosti. Prva je ta što je vremenska složenost izgradnje stabla linearna s obzirom na duljinu ulaznog niza znakova, tj. ako je $T$ ulazni niz znakova, onda je vremenska složenost \textit{Ukkonenovog} algortima $O(n)$ pri čemu je $n = |T|$.
+	
+	Druga prednost je što ima poželjno svojstvo procesiranja simbola s lijeva na desno te pritom ima izgrađeno sufiksno stablo za pročitani dio ulaznog niza, tj. ako smo pročitali prvih $k$ znakova ulaznog niza, $T = t_1 t_2 ... t_n$, nakon obrade simbola $t_k$, sufiksno stablo $STree(T^k)$ će biti u potpunosti izgrađeno.
+
+	TODO zasto je to vazno u bioinformatici mozda
 
 \bibliography{literatura}
 \bibliographystyle{fer}
 
 \chapter{Sažetak}
-Sažetak.
+Sazetak.
 
 \end{document}
