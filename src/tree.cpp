@@ -42,11 +42,11 @@ Node* Tree::split(Node *x, int l, int r, int t) {
   int len = r - l + 1;
   if (r == INF) len = text.size() - l;
   if (l <= r || r == INF) {
-    assert(l < text.size());
+    assert(l < (int)text.size());
     int next_t = text[l];
     Node *next = (*x)[next_t];
     assert(next != NULL);
-    assert(next->edge_start_ + len < text.size());
+    assert(next->edge_start_ + len < (int)text.size());
     if (t == text[next->edge_start_ + len]) {
       return NULL; // end point
     } else {
@@ -149,7 +149,7 @@ int Tree::match(const Node *node, const string& x, int x_start) {
 
 bool Tree::find(const string& x) {
   const Node* curr = root;
-  for (int x_i = 0; x_i < x.size();) {
+  for (int x_i = 0; x_i < (int)x.size();) {
     const Node* next = (*curr)[x[x_i] - 'a'];
     if (next == NULL) return false;
     int mn_len = match(next, x, x_i);

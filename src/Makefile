@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS=-I/usr/local/Cellar/graphviz/2.38.0/include/graphviz --std=gnu++11 -Wall -g
+CFLAGS=  -I/usr/include/graphviz --std=gnu++11 -Wall -g
 LIBS=-lgvc -lcgraph
 
 all: trie test_tree visualize_tree create_tests
