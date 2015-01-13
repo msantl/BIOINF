@@ -1,8 +1,8 @@
 CC = g++
-CFLAGS=-I/usr/local/Cellar/graphviz/2.38.0/include/graphviz --std=gnu++11 -Wall -g
-LIBS=-lgvc -lcgraph
+CFLAGS = --std=gnu++11 -Wall -g# -I/usr/local/Cellar/graphviz/2.38.0/include/graphviz 
+LIBS = #-lgvc -lcgraph
 
-all: trie test_tree visualize_tree create_tests
+all: trie test_tree visualize_tree create_tests test_performance
 
 visualize_tree: visualize_tree.o tree.o node.o array_node.o hashmap_node.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
@@ -38,6 +38,12 @@ create_tests: create_tests.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 create_tests.o: create_tests.cpp
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+test_performance: test_performance.o tree.o node.o array_node.o hashmap_node.o
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+test_performance.o : test_performance.cpp
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 .PHONY: clean all
