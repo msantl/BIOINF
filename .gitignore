@@ -8,3 +8,6 @@ bin/*
 *.toc
 *.bbl
 *.blg
+
+*.in
+*.fa
