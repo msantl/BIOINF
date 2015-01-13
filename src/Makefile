@@ -1,6 +1,6 @@
 CC = g++
-CFLAGS = --std=gnu++11 -Wall -g# -I/usr/local/Cellar/graphviz/2.38.0/include/graphviz 
-LIBS = #-lgvc -lcgraph
+CFLAGS=  -I/usr/include/graphviz --std=gnu++11 -Wall -g
+LIBS=-lgvc -lcgraph
 
 all: trie test_tree visualize_tree create_tests test_performance
 
