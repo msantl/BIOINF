@@ -2,7 +2,7 @@ CC = g++
 CFLAGS=-I/usr/local/Cellar/graphviz/2.38.0/include/graphviz --std=gnu++11 -Wall -g
 LIBS=-lgvc -lcgraph
 
-all: trie test_tree visualize_tree
+all: trie test_tree visualize_tree create_tests
 
 visualize_tree: visualize_tree.o tree.o node.o array_node.o hashmap_node.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
@@ -34,8 +34,13 @@ trie: trie.o
 trie.o: trie.cpp trie.h
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
+create_tests: create_tests.o
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+create_tests.o: create_tests.cpp
+	$(CC) $(CFLAGS) -c -o $@ $< 
 
 .PHONY: clean all
 
 clean:
-	rm *.o *~ trie tree test_tree visualize_tree
+	rm *.o *~ trie tree test_tree visualize_tree create_tests
