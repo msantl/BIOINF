@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <gvc.h>
 
 #include "tree.h"
@@ -6,12 +8,12 @@
 
 using namespace std;
 
-void write(const char* graph) {
+void write(const char* graph, const char* filename) {
   GVC_t *gvc;
   Agraph_t *g;
   FILE *outf;
   gvc = gvContext();
-  outf = fopen("out.png", "w");
+  outf = fopen(filename, "w");
   g = agmemread(graph);
   gvLayout(gvc, g, "dot");
   gvRender(gvc, g, "png", outf);
@@ -32,12 +34,16 @@ Node* create_node(const Tree *tree, int edge_start, int edge_end) {
 int main() {
   const int NUM_ALPHABET = 30;
   Tree t(NUM_ALPHABET, create_node);
+  int id = 1;
   while (true) {
     string s;
     cin >> s;
     char c = s[0];
     t.add_transition(c - 'a');
-    write(t.toDot().c_str());
+    stringstream filename;
+    filename << "out_" << id << ".png";
+    write(t.toDot().c_str(), filename.str().c_str());
+    id++;
   }
   return 0;
 }

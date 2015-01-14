@@ -104,23 +104,33 @@ void Tree::add_transition(int t) {
 }
 
 string Tree::toDot() {
+  curr_id = 1;
+  node_ids = map<const Node*, int>();
   stringstream graph;
   graph << "digraph {" << endl;
-  int curr_id = 0;
-  dfs(root, curr_id, graph);
+  dfs(root, graph);
   graph << "}" << endl;
   return graph.str();
 }
 
-void Tree::dfs(const Node *x, int& curr_id, ostream& out) {
-  int x_id = curr_id;
+int Tree::node_id(const Node *x) {
+  if (node_ids[x] == 0) {
+    node_ids[x] = curr_id++;
+  }
+  return node_ids[x];
+}
+
+void Tree::dfs(const Node *x, ostream& out) {
+  int x_id = node_id(x);
+  if (x != root && x->suffix_link_ != NULL) {
+    out << x_id << " -> " << node_id(x->suffix_link_) << "[style=\"dashed\"]" << endl;
+  }
   for (int i = 0; i < alphabet_size; i++) {
     if ((*x)[i] != NULL) {
-      curr_id++;
-      out << x_id << " -> " << curr_id
+      out << x_id << " -> " << node_id((*x)[i])
         << "[label=" << transition(x, i) << "]"
         << endl;
-      dfs((*x)[i], curr_id, out);
+      dfs((*x)[i], out);
     }
   }
 }

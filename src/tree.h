@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 class Node;
 
@@ -54,6 +55,10 @@ class Tree {
     Node *active_node;
     int active_start, active_end;
 
+    // used only by dfs and toDot methods.
+    std::map<const Node*, int> node_ids;
+    int curr_id;
+
     /**
      * Makes state (x, (l, r)) explicit and return that state.
      * x - is an explicit state
@@ -74,9 +79,15 @@ class Tree {
     std::pair <Node*, int> canonize(Node *x, int l, int r);
 
     /**
+     * Returns id of node x or sets it to next available id if it doesn't
+     * exist.
+     */
+    int node_id(const Node *x);
+
+    /**
      * It traverses the tree and writes it to out in a dot format.
      */
-    void dfs(const Node *x, int& curr_id, std::ostream& out);
+    void dfs(const Node *x, std::ostream& out);
 
     /**
      * Returns transition string on edge x[t].
