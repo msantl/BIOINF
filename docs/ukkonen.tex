@@ -241,14 +241,82 @@ Programski odsječak \ref{construct} konstruira sufiksno stablo $STree(T)$ za ul
 Tu ubacujemo slike za svaki korak s opisom za neki primjer.
 
 \chapter{Rezultati testiranja}
-Testiranje
+	Za testiranje programske izvedbe \textit{Ukkonenovog} algoritma za izgradnju sufiksnog stabla koristili smo \textit{Bio-Linux 8} platformu koja se može preuzeti na \cite{biolinux}. 
+	
+\section{Postavljanje sustava}	
+	\textit{Bio-Linux 8} je moćna, besplatna platforma prilagođena potrebama u bioinformatici koja se može instalirati na osobno računalo ili za to posebno predviđeni poslužitelj.  \textit{Bio-Linux 8} uključuje više of 250 bioinformatičkih paketa na bazni operacijski sustav \textit{GNU/Linux Ubuntu 14.04 LTS}.
+	
+	Međutim, naša programska izvedba \textit{Ukkonenovog} algoritma zahtijeva instalaciju dodatnog paketa koji je potreban za iscrtavanje sufiksnog stabla. Radi se o paketu \textit{graphviz} koji je moguće instalirati sljedećom naredbom
+\begin{lstlisting}
+sudo apt-get install libgraphviz-dev
+\end{lstlisting}
+	
+\section{Izgradnja ostvarenog rješenja}
+	Kako bi olakšali komajliranje ostvarenog programskog rješenja, koristili smo \textit{Makefile} datoteku. Ona omogućuje definiranje pravila kompajliranja izvornog teksta ostvarenog rješenja prema kojima se izgrađuju izvršne datoteke. Za potrebe ovog projekta izradili, kao rezultat izgradnje ostvarenog rješenja nastaju sljedeće izvršne datoteke:
+\begin{itemize}
+	\item trie - izvršna datoteka za izgradnju sufiksnog stobla
+	\item test\_tree - izvršna datoteka koja provjerava ispravan rad izgradnje sufiksnog stabla
+	\item visualize\_tree - izvršna datoteka koja prilikom izgradnje sufiksnog stabla, nakon svakog koraka, iscrtava trenutno stanje sufiksnog stabla
+	\item create\_tests - izvršna datoteka koja čita genom u \textit{FASTA} formatu, te u zasebne datoteke sprema genome za potrebe testiranja
+	\item test\_performance - izvršna datoteka koja čita testove koji se nalaze u zasebnim datotekama te prilikom izgradnje sufiksnog stabla mjeri utrošeno vrijeme i memoriju
+\end{itemize}
+
+\section{Escherichia Coli}
+	Genom bakterije \textit{Escherichia Coli} preuzet je s \cite{ecoli}. 
+	
+	Nakon preuzimanja komprimirane datoteke i raspakiravanja iste, korištena je izvršna datoteke \textit{create\_tests} koja je kreirala zasebne datotke za testiranje u kazalu \textit{/tests/}. Izvršnom datotekom \textit{test\_performance} su zatim provedeni svi testovi te spremljeni rezultati izvođenja. Alatom \textit{gnuplot} su zatim iscrtane ovisnosti vremena izgradnje i memorije potrebne za izgradnju sufiksnog stabla u ovisnosti o veličini ulaznog niza.
+
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/time_1.png}
+	\caption{Vremenska ovisnost o veličini ulaznog niza}
+	\label{image:time}
+\end{figure}
+
+Na slici \ref{image:time} možemo vidjeti dva grafa. Crvenom je bojom označena vremenska ovisnost izgradnje sufiksnog stabla u slučaju kada ja kao struktura podataka čvora korištena \textit{hash} tablica dok je zelenom bojom označena vremenska ovisnost izgradnje sufiksnog stabla u slučaju kada ja kao struktura podataka čvora korišten \textit{niz}.
+
+\pagebreak % to be sure the text below is not shown before this figure
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/memory_1.png}
+	\caption{Memorijska ovisnost o veličini ulaznog niza}
+	\label{image:memory}
+\end{figure}
+
+Slika \ref{image:memory} također koristi iste oznake kao i one za sliku \ref{image:time}. 
+
+Na obje se slike može uočiti \textbf{linearan} porast vremena izvođenja, odnosno, potrebne memorije prilikom izgradnje sufiksnog stabla nad genomom bakterije \textit{Escherichia Coli}.
+
+
+\section{Brochothrix Campestris}
+	Genom bakterije \textit{Brochothrix Campestris} preuzet je s \cite{klamidija}. 
+	
+	U nastavku su prikazani rezultati performanse ostvarenog programskog rješenja nad genomom bakterije \textit{Brochothrix Campestris}.
+
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/time_2.png}
+	\caption{Vremenska ovisnost o veličini ulaznog niza}
+	\label{image:time1}
+\end{figure}
+
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/memory_2.png}
+	\caption{Memorijska ovisnost o veličini ulaznog niza}
+	\label{image:memory1}
+\end{figure}
+
+\pagebreak
+
+Na slici \ref{image:time1} te slici \ref{image:memory1}, možemo opet uočiti \textbf{linearan} porast vremena izvođenja, odnosno, potrebne memorije prilikom izgradnje sufiksnog stabla nad genomom bakterije \textit{Brochothrix Campestris}.
 
 \chapter{Zaključak}
 	\textit{Ukkonenov} algoritam za izgradnju sufiksnog stabla ima dvije prednosti. Prva je ta što je vremenska složenost izgradnje stabla linearna s obzirom na duljinu ulaznog niza znakova, tj. ako je $T$ ulazni niz znakova, onda je vremenska složenost \textit{Ukkonenovog} algortima $O(n)$ pri čemu je $n = |T|$.
 	
 	Druga prednost je što ima poželjno svojstvo procesiranja simbola s lijeva na desno te pritom ima izgrađeno sufiksno stablo za pročitani dio ulaznog niza, tj. ako smo pročitali prvih $k$ znakova ulaznog niza, $T = t_1 t_2 ... t_n$, nakon obrade simbola $t_k$, sufiksno stablo $STree(T^k)$ će biti u potpunosti izgrađeno.
 
-	TODO zasto je to vazno u bioinformatici mozda
+ 	Ostvareno programsko rješenje pokazuje da izgradnja sufiksnog stabla \textit{Ukkonenovim} algoritmom, i vremenski i memorijski, linearno ovisi o velicini ulaznog niza $T$. 
 
 \bibliography{literatura}
 \bibliographystyle{fer}
