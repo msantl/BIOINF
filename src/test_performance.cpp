@@ -102,8 +102,16 @@ int get_memory_usage(void) {
   return ret;
 }
 
+int exists(const char *file) {
+    FILE *f = fopen(file, "r");
+    if (f) {
+        fclose(f);
+        return 1;
+    }
+    return 0;
+}
+
 int main() {
-  const int TEST_CNT = 225;
   char filename[256];
 
   printf("Izgradnja sufiksnog stabla (2 verzije cvora) %d\n", getpid());
@@ -114,9 +122,12 @@ int main() {
       "array t", 
       "array m");
 
-  for (int i = 0; i < TEST_CNT; ++i) {
+  for (int i = 0; ; ++i) {
     memset(filename, 0, sizeof filename);
     sprintf(filename, "../tests/test.%d.in", i);
+
+    if (!exists(filename)) break;
+
     int m1, m2;
 
     clock_t t1 = clock();
