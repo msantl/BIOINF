@@ -238,7 +238,25 @@ dok t[i+1] nije zavrsni znak
 Programski odsječak \ref{construct} konstruira sufiksno stablo $STree(T)$ za ulazni niz znakova $T = t_1 .. t_n$ on-line u vremenskoj složenosti $O(n)$.
 						
 \chapter{Prikaz rada algoritma}
-Tu ubacujemo slike za svaki korak s opisom za neki primjer.
+Izgradnja sufiksnog stabla se odvija redom, dodavajući svaki put novi znak u stablo. Nakon svakog koraka sufiksno stablo je valjano.
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/cacao_vizualization.png}
+	\caption{Izgradnja sufiksnog stabla za riječ cacao}
+	\label{image:cacao}
+\end{figure}
+
+Na slici \ref{image:cacao} je prikazana izgradnja stabla za već klasičnu riječ cacao. Na ovim sufiksnim stablima čvor broj 1 uvijek predstavlja korijen stabla. Njegov roditelj nije prikazan jer se nikada ne mijenjaju veze iz ili prema tom čvoru.
+
+Opis dodavanja svakog idućeg znaka iz riječi cacao.
+\begin{enumerate}
+	\item Prije dodavanja znakova. Aktivna točka je u korijenu stabla, a završna točka je u roditelj korijena.
+	\item Dodavanje znaka c. Ne postoji ništa prije aktivne točke. U aktivnoj točki se dodaje znak c čime nastaje novi prijelaz i novi čvor. Sufkisna veza vodi do završne točke, te time završava dodavanje novih čvorova. Prijelazom iz završne točke znakom c nastaje nova aktivna točka -- korijen.
+	\item Dodavanje znaka a. Svi čvorovi prije aktivne točke (listovi) dobivaju automatski znak a na kraj. U aktivnoj točki se dodaje prijelaz a te nastaje novi čvor označen brojem 2. Iduće stanje je roditelj od korijena no on već ima prijelaz za znak a te time ažuriranje stabla završava. Aktivna točka se dobiva prijelazom znakom a, a to je korijen stabla.
+	\item Dodavanje znaka c. Svi čvorovi prije aktivne točke (listovi) dobivaju automatski znak c na kraj. U aktivnoj točki, tj. u korijenu već postoji prijelaz za znak c, što znači da je postupak ažuriranja stabla gotov. Nova aktivna točka postaje stanje do kojeg se dolazi koristeći znak c. To je stanje s oznakom (root, c), tj. nalazi se na bridu 1-3 iza slova c.
+	\item Dodavanje znaka a. Svi čvorovi prije aktivne točke (listovi) dobivaju automatski znak a na kraj. U aktivnoj točki, tj. iza slova c na bridu 1-3 već postoji znak a što znači da je osvješavanje stabla završeno i da se aktivna točka samo pomiče koristeći znak a -- brid 1-3 iza ca (root, ca).
+	\item Dodavanje znaka o. Svi čvorovi prije aktivne točke (listovi) dobivaju automatski znak o na kraj. U staroj aktivnoj točki, tj. iza slova ca na bridu 1-3 ne postoji znak o što znači da je potrebno dodati novu granu na tom mjestu. To se radi tako da se stvara novi čvor na tom mjestu, na slici čvor 5, te iz njega izlaze dva brida, jedan koji vodi do starog čvora (broj 6 na slici) i jedan koji vodi do novostvorenog čvora (broj 7 na slici). Sljedeće stanje u koje algoritam dolazi je (root, a). Dodavanjem znaka o se također mora razbiti brid te stvoriti novi čvor označen brojem 2, te iz njega izlaze dvije grane, jedna prema starom čvoru označenim brojem 3 i prema novom čvoru označeim brojem 4. Također dodaje se sufiksna veza iz prethodnog čvora označenog brojem 5 prema čvoru 2 jer je to stanje upravo sufiks prošlog stanja. Iduće stanje u koje algoritam dolazi je sufiks od (root, a), a to je (root, $\epsilon$). Iz njega ne postoji prijelaz za slovo o pa se stvara novi čvor označen brojem 8 te se stvara sufiksna veza iz prošlog čvora do trenutnog čvora, tj. iz čvora 2 do čvora 1. Nova aktivna točka je (root, $\epsilon$).
+\end{enumerate}
 
 \chapter{Rezultati testiranja}
 	Za testiranje programske izvedbe \textit{Ukkonenovog} algoritma za izgradnju sufiksnog stabla koristili smo \textit{Bio-Linux 8} platformu koja se može preuzeti na \cite{biolinux}. 
@@ -316,12 +334,14 @@ Na slici \ref{image:time1} te slici \ref{image:memory1}, možemo opet uočiti \t
 	
 	Druga prednost je što ima poželjno svojstvo procesiranja simbola s lijeva na desno te pritom ima izgrađeno sufiksno stablo za pročitani dio ulaznog niza, tj. ako smo pročitali prvih $k$ znakova ulaznog niza, $T = t_1 t_2 ... t_n$, nakon obrade simbola $t_k$, sufiksno stablo $STree(T^k)$ će biti u potpunosti izgrađeno.
 
- 	Ostvareno programsko rješenje pokazuje da izgradnja sufiksnog stabla \textit{Ukkonenovim} algoritmom, i vremenski i memorijski, linearno ovisi o velicini ulaznog niza $T$. 
+ 	Ostvareno programsko rješenje pokazuje da izgradnja sufiksnog stabla \textit{Ukkonenovim} algoritmom, i vremenski i memorijski, linearno ovisi o velicini ulaznog niza $T$.
 
 \bibliography{literatura}
 \bibliographystyle{fer}
 
 \chapter{Sažetak}
-Sazetak.
+Ukkonenov algoritam efikasno rješava problem izgradnje sufiksnog stabla. Vremenska i memorijska složenost je $O(n)$, tj. optimalna. Unatoč tome u praksi je memorijska konstanta često prevelika jer sufiksno stablo zauzima 10 do 50 puta više memorije nego li je veličina ulaznog niza. Zbog toga su su se dosta počela istraživati sufiksna polja koja zauzimaju puno manje memorije, a mogu u jednakoj složenosti odgovarati na skoro sve upite kao i sufiksna stabla.
+
+Unatoč tome ovo je jedan od jednostavnijih efikasnih \textit{on-line} algoritama izgradnje sufiksnog stabla.
 
 \end{document}
