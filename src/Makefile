@@ -49,4 +49,4 @@ test_performance.o : test_performance.cpp
 .PHONY: clean all
 
 clean:
-	rm *.o *~ trie tree test_tree visualize_tree create_tests test_performance
+	rm -rf *.png *.o *~ trie tree test_tree visualize_tree create_tests test_performance

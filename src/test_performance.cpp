@@ -58,6 +58,20 @@ Tree* create_tree(const char *filename,
   return t;
 }
 
+Tree* create_random_tree(int n,
+        Node* (*create_node)(const Tree*, int, int)) {
+
+  const int MXA = 5;
+  Tree* t = new Tree(NUM_ALPHABET, create_node);
+  for (int i = 0; i < n; i++) {
+    char c = 'a' + rand() % MXA;
+    t->add_transition(c - 'a');
+  }
+
+  return t;
+}
+
+
 int get_memory_usage(void) {
   FILE *f;
   size_t len;
@@ -111,16 +125,41 @@ int exists(const char *file) {
     return 0;
 }
 
-int main() {
-  char filename[256];
+void test_random() {
+  for (int i = 100; i <= 1000100; i += 10000) {
+    int m1, m2;
 
-  printf("Izgradnja sufiksnog stabla (2 verzije cvora) %d\n", getpid());
-  printf("%10s\t%10s\t%10s\t%10s\t%10s\n", 
-      "char cnt", 
-      "hashmap t", 
-      "hashmap m", 
-      "array t", 
-      "array m");
+    clock_t t1 = clock();
+    /* hashmap node */
+    {
+      Tree* t = create_random_tree(i, create_hash_node);
+      m1 = get_memory_usage();
+      delete t;
+    }
+    clock_t t2 = clock();
+    usleep(100000);
+
+    /* array node */
+    clock_t t3 = clock();
+    {
+      Tree* t = create_random_tree(i, create_array_node);
+      m2 = get_memory_usage();
+      delete t;
+    }
+    clock_t t4 = clock();
+    usleep(100000);
+
+    printf("%10d\t%10.3lf\t%10d\t%10.3lf\t%10d\n",
+        i,
+        (double)(t2 - t1) / CLOCKS_PER_SEC, 
+        m1,
+        (double)(t4 - t3) / CLOCKS_PER_SEC,
+        m2);
+  }
+}
+
+void test_genome() {
+  char filename[256];
 
   for (int i = 0; ; ++i) {
     memset(filename, 0, sizeof filename);
@@ -157,5 +196,23 @@ int main() {
         (double)(t4 - t3) / CLOCKS_PER_SEC,
         m2);
   }
+
+}
+
+int main(int argc, char **argv) {
+  printf("Izgradnja sufiksnog stabla (2 verzije cvora) %d\n", getpid());
+  printf("%10s\t%10s\t%10s\t%10s\t%10s\n", 
+      "char cnt", 
+      "hashmap t", 
+      "hashmap m", 
+      "array t", 
+      "array m");
+
+  if (argc == 2 && strncmp(argv[1], "genome", 6) == 0) {
+      test_genome();
+  } else {
+      test_random();
+  }
+
   return 0;
 }
