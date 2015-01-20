@@ -288,20 +288,20 @@ sudo apt-get install libgraphviz-dev
 	\centering
 	\includegraphics[width=1\textwidth]{media/time_1.png}
 	\caption{Vremenska ovisnost o veličini ulaznog niza}
-	\label{image:time}
+	\label{image:time1}
 \end{figure}
 
-Na slici \ref{image:time} možemo vidjeti dva grafa. Crvenom je bojom označena vremenska ovisnost izgradnje sufiksnog stabla u slučaju kada ja kao struktura podataka čvora korištena \textit{hash} tablica dok je zelenom bojom označena vremenska ovisnost izgradnje sufiksnog stabla u slučaju kada ja kao struktura podataka čvora korišten \textit{niz}.
+Na slici \ref{image:time1} možemo vidjeti dva grafa. Crvenom je bojom označena vremenska ovisnost izgradnje sufiksnog stabla u slučaju kada ja kao struktura podataka čvora korištena \textit{hash} tablica dok je zelenom bojom označena vremenska ovisnost izgradnje sufiksnog stabla u slučaju kada ja kao struktura podataka čvora korišten \textit{niz}.
 
 \pagebreak % to be sure the text below is not shown before this figure
 \begin{figure}[h!]	
 	\centering
 	\includegraphics[width=1\textwidth]{media/memory_1.png}
 	\caption{Memorijska ovisnost o veličini ulaznog niza}
-	\label{image:memory}
+	\label{image:memory1}
 \end{figure}
 
-Slika \ref{image:memory} također koristi iste oznake kao i one za sliku \ref{image:time}. 
+Slika \ref{image:memory1} također koristi iste oznake kao i one za sliku \ref{image:time1}. 
 
 Na obje se slike može uočiti \textbf{linearan} porast vremena izvođenja, odnosno, potrebne memorije prilikom izgradnje sufiksnog stabla nad genomom bakterije \textit{Escherichia Coli}.
 
@@ -309,28 +309,48 @@ Na obje se slike može uočiti \textbf{linearan} porast vremena izvođenja, odno
 \section{Brochothrix Campestris}
 	Genom bakterije \textit{Brochothrix Campestris} preuzet je s \cite{klamidija}. 
 	
-	U nastavku su prikazani rezultati performanse ostvarenog programskog rješenja nad genomom bakterije \textit{Brochothrix Campestris}.
+	U nastavku su prikazane performanse ostvarenog programskog rješenja nad genomom bakterije \textit{Brochothrix Campestris}.
 
 \begin{figure}[h!]	
 	\centering
 	\includegraphics[width=1\textwidth]{media/time_2.png}
 	\caption{Vremenska ovisnost o veličini ulaznog niza}
-	\label{image:time1}
+	\label{image:time2}
 \end{figure}
 
 \begin{figure}[h!]	
 	\centering
 	\includegraphics[width=1\textwidth]{media/memory_2.png}
 	\caption{Memorijska ovisnost o veličini ulaznog niza}
-	\label{image:memory1}
+	\label{image:memory2}
 \end{figure}
 
 \pagebreak
 
-Na slici \ref{image:time1} te slici \ref{image:memory1}, možemo opet uočiti \textbf{linearan} porast vremena izvođenja, odnosno, potrebne memorije prilikom izgradnje sufiksnog stabla nad genomom bakterije \textit{Brochothrix Campestris}.
+Na slici \ref{image:time2} te slici \ref{image:memory2}, možemo uočiti \textbf{linearan} porast vremena izvođenja, odnosno potrebne memorije prilikom izgradnje sufiksnog stabla nad genomom bakterije \textit{Brochothrix Campestris}.
 
+\section{Sintetički testni primjer}
+	Za dodatno testiranje performansi, korišteni su i sintetički testni primjeri generirani pseudo-slučajnim generatorom. Raspoon veličine ulaznog niza je od $100$ do $1000000$, dok je veličina abecede pet  znakova.
+	
+	U nastavku su prikazane performanse ostvarenog programskog rješenja na sintetičkim testinim primjerima.
 
-% TODO dodati random generirani test s performansama
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/time_r.png}
+	\caption{Vremenska ovisnost o veličini ulaznog niza}
+	\label{image:timer}
+\end{figure}
+
+\begin{figure}[h!]	
+	\centering
+	\includegraphics[width=1\textwidth]{media/memory_r.png}
+	\caption{Memorijska ovisnost o veličini ulaznog niza}
+	\label{image:memoryr}
+\end{figure}
+
+\pagebreak
+
+Na slici \ref{image:timer} te slici \ref{image:memoryr}, opet uočavamo \textbf{linearan} porast vremena izvođenja, odnosno potrebne memorije prilikom izgradnje sufiksnog stabla na sintetičkim testnim primjerima.
 
 \chapter{Zaključak}
 	\textit{Ukkonenov} algoritam za izgradnju sufiksnog stabla ima dvije prednosti. Prva je ta što je vremenska složenost izgradnje stabla linearna s obzirom na duljinu ulaznog niza znakova, tj. ako je $T$ ulazni niz znakova, onda je vremenska složenost \textit{Ukkonenovog} algortima $O(n)$ pri čemu je $n = |T|$.
